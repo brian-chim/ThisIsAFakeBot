@@ -3,6 +3,7 @@ package com.thisisafakecom.thisisafakebot.commands;
 import java.util.ArrayList;
 
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -13,6 +14,7 @@ public class CommandHandler extends ListenerAdapter {
   
   public CommandHandler() {
     handledCommands.add(new RepeatCommand());
+    handledCommands.add(new GetPointsCommand());
   }
 
   public void handleCommand(Message input) throws CommandNotSupportedException {

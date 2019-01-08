@@ -21,12 +21,11 @@ public class DBHandler {
     return conn;
   }
 
-  public static boolean insertNewUser(String username, String guildId) {
-    String sql = "INSERT INTO PointsTable (Username, GuildID, Points, Level) VALUES (?, ?, 0, 1)";
+  public static boolean insertNewUser(String userId) {
+    String sql = "INSERT INTO PointsTable (ID, Points) VALUES (?, 0)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setString(1, username);
-        pstmt.setString(2, guildId);
+        pstmt.setString(1, userId);
         pstmt.executeUpdate();
         return true;
     } catch (SQLException e) {
@@ -35,19 +34,18 @@ public class DBHandler {
     }
   }
 
-  public static int getPoints(String username, String guildId) {
-    String sql = "SELECT * FROM PointsTable WHERE Username = ? AND GuildId = ?";
+  public static int getPoints(String userId) {
+    String sql = "SELECT * FROM PointsTable WHERE ID = ?";
     int points;
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setString(1, username);
-        pstmt.setString(2, guildId);
+        pstmt.setString(1, userId);
         ResultSet rs = pstmt.executeQuery();
         if(rs.next()) {
           points = rs.getInt("Points");
         } else {
-          insertNewUser(username, guildId);
-          return getPoints(username, guildId);
+          insertNewUser(userId);
+          return getPoints(userId);
         }
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -56,24 +54,4 @@ public class DBHandler {
     return points;
   }
 
-  public static int getLevel(String username, String guildId) {
-    String sql = "SELECT * FROM PointsTable WHERE Username = ? AND GuildId = ?";
-    int level;
-    try (Connection conn = connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setString(1, username);
-        pstmt.setString(2, guildId);
-        ResultSet rs = pstmt.executeQuery();
-        if(rs.next()) {
-          level = rs.getInt("Level");
-        } else {
-          insertNewUser(username, guildId);
-          return getLevel(username, guildId);
-        }
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-      level = -1;
-    }
-    return level;
-  }
 }
