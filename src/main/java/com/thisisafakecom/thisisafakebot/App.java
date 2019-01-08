@@ -4,6 +4,7 @@ import javax.security.auth.login.LoginException;
 
 import com.thisisafakecom.thisisafakebot.commands.CommandHandler;
 import com.thisisafakecom.thisisafakebot.commands.CommandNotSupportedException;
+import com.thisisafakecom.thisisafakebot.commands.points.database.DBHandler;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
@@ -22,6 +23,7 @@ public class App extends ListenerAdapter
     bot.setToken("token");
     bot.addEventListener(new App());
     bot.build();
+    System.out.println(DBHandler.getPoints("thisisfakename", "test"));
   }
 
   @Override
