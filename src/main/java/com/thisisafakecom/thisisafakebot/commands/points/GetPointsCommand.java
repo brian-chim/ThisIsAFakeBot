@@ -20,7 +20,10 @@ public class GetPointsCommand extends CommandAbstract {
     if(tokenized.length != 1) {
       throw new IncorrectUsageException();
     } else {
-      System.out.println(DBHandler.getPoints(input.getAuthor().getId()));
+      MessageChannel channel = input.getChannel();
+      int points = DBHandler.getPoints(input.getAuthor().getId());
+      String msg = input.getAuthor().getName() + ": You currently have " + points + " points.";
+      channel.sendMessage(msg).queue();
     }
   }
 
