@@ -28,7 +28,7 @@ public class DBHandler {
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(1, user.getId());
-        pstmt.setString(2, user.getName() + user.getDiscriminator());
+        pstmt.setString(2, user.getName() + "#" + user.getDiscriminator());
         if (pstmt.executeUpdate() == 0) {
           return false;
         } else {
