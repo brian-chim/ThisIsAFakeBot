@@ -4,6 +4,8 @@ import javax.security.auth.login.LoginException;
 
 import com.thisisafakecom.thisisafakebot.commands.CommandHandler;
 import com.thisisafakecom.thisisafakebot.commands.CommandNotSupportedException;
+import com.thisisafakecom.thisisafakebot.commands.points.PointsHandler;
+
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -21,6 +23,7 @@ public class App extends ListenerAdapter
     bot.setToken("token");
     bot.addEventListener(new App());
     bot.build();
+    //TODO add all missing users to the db on start up
   }
 
   @Override
@@ -33,7 +36,8 @@ public class App extends ListenerAdapter
         } catch (CommandNotSupportedException e) {
           event.getChannel().sendMessage("Command not found!").queue();
         }
-      } 
+      }
+      PointsHandler.autoGenPoints(msgReceived);
     }
   }
 }

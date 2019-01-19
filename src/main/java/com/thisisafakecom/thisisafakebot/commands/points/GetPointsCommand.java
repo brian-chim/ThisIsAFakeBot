@@ -6,6 +6,7 @@ import com.thisisafakecom.thisisafakebot.commands.points.database.DBHandler;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public class GetPointsCommand extends CommandAbstract {
 
@@ -21,8 +22,9 @@ public class GetPointsCommand extends CommandAbstract {
       throw new IncorrectUsageException();
     } else {
       MessageChannel channel = input.getChannel();
-      int points = DBHandler.getPoints(input.getAuthor().getId());
-      String msg = input.getAuthor().getName() + ": You currently have " + points + " points.";
+      User author = input.getAuthor();
+      int points = DBHandler.getPoints(author);
+      String msg = author.getName() + ": You currently have " + points + " points.";
       channel.sendMessage(msg).queue();
     }
   }
