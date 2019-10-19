@@ -1,29 +1,42 @@
 package com.thisisafakecom.thisisafakebot;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.security.auth.login.LoginException;
 
 import com.thisisafakecom.thisisafakebot.commands.CommandHandler;
 import com.thisisafakecom.thisisafakebot.commands.CommandNotSupportedException;
 import com.thisisafakecom.thisisafakebot.commands.points.PointsHandler;
+import com.thisisafakecom.thisisafakebot.database.DBHandler;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class App extends ListenerAdapter 
 {
 
-  private final String botPrefix = "!";
+  public static final String botPrefix = ".";
   private final CommandHandler ch = new CommandHandler();
 
-  public static void main( String[] args ) throws LoginException {
+  public static void main(String[] args ) throws LoginException {
+	String token = "";
+	try {
+		token = new String(Files.readAllBytes(Paths.get("token.secret")));
+	} catch (IOException e) {
+		System.out.println("Failed to retrieve token.");
+		return;
+	}
     JDABuilder bot = new JDABuilder(AccountType.BOT);
-    bot.setToken("token");
-    bot.addEventListener(new App());
+    bot.setToken(token);
+    bot.addEventListeners(new App());
     bot.build();
     //TODO add all missing users to the db on start up
+    DBHandler.initDb();
   }
 
   @Override

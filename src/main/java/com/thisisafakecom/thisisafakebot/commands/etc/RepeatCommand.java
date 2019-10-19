@@ -2,11 +2,12 @@ package com.thisisafakecom.thisisafakebot.commands.etc;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.CommandAbstract;
 import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
 
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Message;
 
 public class RepeatCommand extends CommandAbstract {
 
@@ -37,7 +38,7 @@ public class RepeatCommand extends CommandAbstract {
   @Override
   public void correctUsage(Message input) {
     MessageChannel channel = input.getChannel();
-    String msg = "Correct Usage: ``!" + commandHandled + " [your message here] " + "[number of repetitions]``";
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + " [your message here] " + "[number of repetitions]``";
     channel.sendMessage(msg).queue();
   }
 }

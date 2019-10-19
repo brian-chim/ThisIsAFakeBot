@@ -1,11 +1,12 @@
 package com.thisisafakecom.thisisafakebot.commands;
 
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.Message;
 
 public abstract class CommandAbstract implements ICommand {
 
   protected String commandHandled;
-
+  protected String[] subCommands;
+ 
   public String getCommandHandled() {
     return this.commandHandled;
   }

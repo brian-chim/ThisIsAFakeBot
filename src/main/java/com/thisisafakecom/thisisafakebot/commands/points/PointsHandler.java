@@ -1,8 +1,8 @@
 package com.thisisafakecom.thisisafakebot.commands.points;
 
-import com.thisisafakecom.thisisafakebot.commands.points.database.DBHandler;
+import com.thisisafakecom.thisisafakebot.commands.points.database.PointsDBHandler;
 
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.entities.Message;
 
 public class PointsHandler {
 
@@ -13,7 +13,7 @@ public class PointsHandler {
     // rng from 0 to 100
     double random = Math.random() * 100;
     if (random <= genRate) {
-      DBHandler.addPoints(message.getAuthor(), 1); 
+      PointsDBHandler.addPoints(message.getAuthor(), 1); 
     }
   }
 

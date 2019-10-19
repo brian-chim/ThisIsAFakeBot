@@ -1,35 +1,25 @@
 package com.thisisafakecom.thisisafakebot.commands.points.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.dv8tion.jda.core.entities.User;
+import com.thisisafakecom.thisisafakebot.database.DBHandler;
 
-public class DBHandler {
+import net.dv8tion.jda.api.entities.User;
 
-  // taken from http://www.sqlitetutorial.net/sqlite-java/select/
-  private static Connection connect() {
-    // SQLite connection string
-    String url = "jdbc:sqlite:sqlite/db/points.db";
-    Connection conn = null;
-    try {
-        conn = DriverManager.getConnection(url);
-    } catch (SQLException e) {
-        System.out.println(e.getMessage());
-    }
-    return conn;
-  }
+public class PointsDBHandler {
 
   public static boolean insertNewUser(User user) {
     String sql = "INSERT INTO PointsTable (ID, CanonicalName, Points) VALUES (?, ?, 0)";
-    try (Connection conn = connect();
+    try (Connection conn = DBHandler.connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(1, user.getId());
         pstmt.setString(2, user.getName() + "#" + user.getDiscriminator());
-        if (pstmt.executeUpdate() == 0) {
+        int update = pstmt.executeUpdate();
+        DBHandler.close(conn, pstmt);
+        if (update == 0) {
           return false;
         } else {
           return true;
@@ -43,13 +33,15 @@ public class DBHandler {
   public static int getPoints(User user) {
     String sql = "SELECT * FROM PointsTable WHERE ID = ?";
     int points;
-    try (Connection conn = connect();
+    try (Connection conn = DBHandler.connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(1, user.getId());
         ResultSet rs = pstmt.executeQuery();
         if(rs.next()) {
           points = rs.getInt("Points");
+          DBHandler.close(conn, pstmt, rs);
         } else {
+          DBHandler.close(conn, pstmt, rs);
           insertNewUser(user);
           return getPoints(user);
         }
@@ -62,12 +54,14 @@ public class DBHandler {
 
   public static boolean addPoints(User user, int points) {
     String sql = "UPDATE PointsTable SET Points = Points + ? WHERE ID = ?";
-    try (Connection conn = connect();
+    try (Connection conn = DBHandler.connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(2, user.getId());
         pstmt.setInt(1, points);
         // check if one record was updated
-        if(pstmt.executeUpdate() == 0) {
+        int update = pstmt.executeUpdate();
+        DBHandler.close(conn, pstmt);
+        if(update == 0) {
           // if it wasnt then insert a new user and try again
           if (insertNewUser(user)) {
             // new user inserted, return the next try;
