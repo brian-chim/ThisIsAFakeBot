@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -15,7 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
   private final AudioPlayer player;
   private final BlockingQueue<AudioTrack> queue;
-
+  private AudioTrack currentTrack;
+  
   /**
    * @param player The audio player this scheduler uses
    */
@@ -36,6 +38,7 @@ public class TrackScheduler extends AudioEventAdapter {
     if (!player.startTrack(track, true)) {
       queue.offer(track);
     }
+    currentTrack = track;
   }
 
   /**
@@ -44,6 +47,7 @@ public class TrackScheduler extends AudioEventAdapter {
   public void nextTrack() {
     // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
     // giving null to startTrack, which is a valid argument and will simply stop the player.
+	currentTrack = queue.peek();
     player.startTrack(queue.poll(), false);
   }
 
@@ -53,5 +57,19 @@ public class TrackScheduler extends AudioEventAdapter {
     if (endReason.mayStartNext) {
       nextTrack();
     }
+  }
+
+  public AudioTrack[] getLatest5Tracks() {
+	  Iterator <AudioTrack> it = queue.iterator();
+	  int i = 0;
+	  AudioTrack[] ret = new AudioTrack[5];
+	  while (it.hasNext() && i < 5) {
+		  ret[i] = it.next();
+	  }
+	  return ret;
+  }
+  
+  public AudioTrack getCurrentTrack() {
+	  return currentTrack;
   }
 }

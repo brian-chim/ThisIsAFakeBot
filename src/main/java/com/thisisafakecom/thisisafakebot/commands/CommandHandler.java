@@ -2,8 +2,10 @@ package com.thisisafakecom.thisisafakebot.commands;
 
 import java.util.ArrayList;
 
+import com.thisisafakecom.thisisafakebot.commands.etc.GoodnightCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
-import com.thisisafakecom.thisisafakebot.commands.music.MusicCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.ListCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -16,7 +18,9 @@ public class CommandHandler extends ListenerAdapter {
   public CommandHandler() {
     handledCommands.add(new RepeatCommand());
     handledCommands.add(new GetPointsCommand());
-    handledCommands.add(new MusicCommand());
+    handledCommands.add(new PlayCommand());
+    handledCommands.add(new ListCommand());
+    handledCommands.add(new GoodnightCommand());
   }
 
   public void handleCommand(Message input) throws CommandNotSupportedException {
@@ -24,7 +28,7 @@ public class CommandHandler extends ListenerAdapter {
     boolean handled = false;
     for (ICommand command : handledCommands) {
       String cmd = tokenized[0].substring(1); 
-      if (command.getCommandHandled().equals(cmd)) {
+      if (command.getCommandHandled().equalsIgnoreCase(cmd)) {
         try {
           command.handle(input);
         } catch (IncorrectUsageException e) {
