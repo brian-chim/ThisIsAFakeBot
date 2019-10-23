@@ -4,17 +4,17 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.CommandAbstract;
 import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
-import com.thisisafakecom.thisisafakebot.commands.music.handlers.GuildMusicManager;
 import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicHandler;
 import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicUtils;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 
-public class ListCommand extends CommandAbstract {
+public class CurrCommand extends CommandAbstract {
 
-	public ListCommand() {
-		commandHandled = "list";
+	public CurrCommand() {
+		commandHandled = "curr";
 	}
 
 	@Override
@@ -23,28 +23,11 @@ public class ListCommand extends CommandAbstract {
 		if (tokenized.length != 1) {
 			throw new IncorrectUsageException();
 		}
-		MusicHandler mh = MusicHandler.getInstance();
-		GuildMusicManager gm = mh.getGuildAudioPlayer(input.getGuild());
-		AudioTrack[] tracks = gm.scheduler.getLatest5Tracks();
-		String msg = "";
-		boolean containsInfo = false;
-		if (tracks[0] != null) {
-			containsInfo = true;
-		}
-		for (AudioTrack track : tracks) {
-			if (track == null) {
-				break;
-			}
-			msg += MusicUtils.getTrackTitleAndLength(track) + "\n";
-		}
-		if (containsInfo) {
-			msg = "``" + msg + "``";
-		}
-		if (msg.isEmpty()) {
-			msg = "No tracks in queue!";
-		}
 		MessageChannel channel = input.getChannel();
-		channel.sendMessage(msg).queue();
+		Guild guild = input.getGuild();
+		AudioTrack currentTrack = MusicHandler.getInstance().getGuildAudioPlayer(guild).scheduler.getCurrentTrack();
+		String msg = "``" + MusicUtils.getTrackTitleAndLength(currentTrack) + "``";
+		channel.sendMessage(msg).queue();;
 	}
 
 	@Override
@@ -53,4 +36,5 @@ public class ListCommand extends CommandAbstract {
 	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
 	    channel.sendMessage(msg).queue();
 	}
+
 }

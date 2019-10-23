@@ -1,7 +1,9 @@
-package com.thisisafakecom.thisisafakebot.commands.music;
+package com.thisisafakecom.thisisafakebot.commands.music.handlers;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 /**
  * Holder for both the player and a track scheduler for one guild.

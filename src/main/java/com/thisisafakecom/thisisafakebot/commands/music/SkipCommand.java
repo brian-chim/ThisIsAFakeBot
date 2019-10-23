@@ -3,6 +3,8 @@ package com.thisisafakecom.thisisafakebot.commands.music;
 import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.CommandAbstract;
 import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
+import com.thisisafakecom.thisisafakebot.commands.music.handlers.GuildMusicManager;
+import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicHandler;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;

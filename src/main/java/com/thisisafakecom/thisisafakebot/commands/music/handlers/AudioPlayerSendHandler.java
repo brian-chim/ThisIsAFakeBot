@@ -1,4 +1,4 @@
-package com.thisisafakecom.thisisafakebot.commands.music;
+package com.thisisafakecom.thisisafakebot.commands.music.handlers;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;

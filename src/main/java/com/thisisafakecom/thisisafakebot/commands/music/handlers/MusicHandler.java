@@ -1,4 +1,4 @@
-package com.thisisafakecom.thisisafakebot.commands.music;
+package com.thisisafakecom.thisisafakebot.commands.music.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,5 +42,4 @@ public class MusicHandler {
 		}
 		return instance;
 	}
-
 }

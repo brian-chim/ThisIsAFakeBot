@@ -1,4 +1,4 @@
-package com.thisisafakecom.thisisafakebot.commands.music;
+package com.thisisafakecom.thisisafakebot.commands.music.handlers;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -65,10 +65,17 @@ public class TrackScheduler extends AudioEventAdapter {
 	  AudioTrack[] ret = new AudioTrack[5];
 	  while (it.hasNext() && i < 5) {
 		  ret[i] = it.next();
+		  i++;
 	  }
 	  return ret;
   }
-  
+
+  public int clearQueue() {
+	  int removedCount = queue.size();
+	  queue.clear();
+	  return removedCount;
+  }
+
   public AudioTrack getCurrentTrack() {
 	  return currentTrack;
   }

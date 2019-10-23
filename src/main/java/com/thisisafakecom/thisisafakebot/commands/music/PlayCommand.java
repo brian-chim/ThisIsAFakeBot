@@ -7,6 +7,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.CommandAbstract;
 import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
+import com.thisisafakecom.thisisafakebot.commands.music.handlers.GuildMusicManager;
+import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicHandler;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
