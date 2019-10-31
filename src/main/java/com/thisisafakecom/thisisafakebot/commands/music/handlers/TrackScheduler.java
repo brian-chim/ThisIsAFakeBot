@@ -17,6 +17,7 @@ public class TrackScheduler extends AudioEventAdapter {
   private final AudioPlayer player;
   private final BlockingQueue<AudioTrack> queue;
   private AudioTrack currentTrack;
+  private boolean loop = false;
   
   /**
    * @param player The audio player this scheduler uses
@@ -37,8 +38,9 @@ public class TrackScheduler extends AudioEventAdapter {
     // track goes to the queue instead.
     if (!player.startTrack(track, true)) {
       queue.offer(track);
+    } else {
+      currentTrack = track;
     }
-    currentTrack = track;
   }
 
   /**
@@ -54,7 +56,11 @@ public class TrackScheduler extends AudioEventAdapter {
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     // Only start the next track if the end reason is suitable for it (FINISHED or LOAD_FAILED)
+	currentTrack = null;
     if (endReason.mayStartNext) {
+	  if (loop) {
+		queue.offer(track.makeClone());
+      }
       nextTrack();
     }
   }
@@ -78,5 +84,13 @@ public class TrackScheduler extends AudioEventAdapter {
 
   public AudioTrack getCurrentTrack() {
 	  return currentTrack;
+  }
+
+  public void setLoop(boolean loop) {
+	  this.loop = loop;
+  }
+
+  public boolean getLoop() {
+	  return loop;
   }
 }

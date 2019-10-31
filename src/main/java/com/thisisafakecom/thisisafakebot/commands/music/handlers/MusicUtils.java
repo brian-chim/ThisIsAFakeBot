@@ -5,6 +5,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 public class MusicUtils {
 
 	public static String getTrackTitleAndLength(AudioTrack track) {
+		if (track == null) {
+			return "No track!";
+		}
 		return track.getInfo().title + " " + convertSecondsToLengthString(convertMsToS(track.getInfo().length));
 	}
 

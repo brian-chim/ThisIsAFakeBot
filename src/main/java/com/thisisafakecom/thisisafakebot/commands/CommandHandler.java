@@ -6,6 +6,7 @@ import com.thisisafakecom.thisisafakebot.commands.etc.GoodnightCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.CurrCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ListCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.LoopCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.SkipCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
@@ -28,6 +29,7 @@ public class CommandHandler extends ListenerAdapter {
     handledCommands.add(new SkipCommand());
     handledCommands.add(new CurrCommand());
     handledCommands.add(new StopCommand());
+    handledCommands.add(new LoopCommand());
     // points
     handledCommands.add(new GetPointsCommand());
   }
