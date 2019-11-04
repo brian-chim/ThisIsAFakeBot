@@ -19,7 +19,7 @@ public class GoodnightCommand extends CommandAbstract {
 		if (tokenized.length != 1) {
 			throw new IncorrectUsageException();
 		} else {
-			String msg = "Goodnight @" + input.getAuthor().getName();
+			String msg = "Goodnight " + input.getAuthor().getAsMention();
 			MessageChannel channel = input.getChannel();
 			channel.sendMessage(msg).queue();
 		}
