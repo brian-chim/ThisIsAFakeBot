@@ -66,19 +66,19 @@ public class PlayCommand extends CommandAbstract {
 		} else {
 			// get the list of videos for the query
 			try {
-				ArrayList<YoutubeSearchInfo> vidList = YoutubeHandler.search(urlOrSearch);
+				ArrayList<YoutubeSearchInfo> vidList = YoutubeHandler.searchVideos(urlOrSearch);
 				String msg = "";
 				for (int i = 0; i < vidList.size(); i++) {
-					String curr = vidList.get(i).videoTitle.substring(0, 31);
-					if (curr.length() >= 30) {
-						curr = curr.substring(0, 28);
-						curr += "...";
+					String title = vidList.get(i).videoTitle;
+					if (title.length() >= 60) {
+						title = title.substring(0, 58);
+						title += "...";
 					} else {
-						while (curr.length() < 30) {
-							curr += " ";
+						while (title.length() < 60) {
+							title += " ";
 						}	
 					}
-					msg += "```" + curr + "    " + (i+1) + "```";
+					msg += "```" + (i+1) + ":   " + title + "```";
 				}
 				// TODO make a selection using the number emojis?
 				channel.sendMessage("Make a selection using 1-" + vidList.size()).queue();
@@ -93,7 +93,7 @@ public class PlayCommand extends CommandAbstract {
 								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + 
 										vidList.get(isValidSelection(e.getMessage(), vidList.size()) - 1).videoId);	
 							} else {
-								channel.sendMessage("Not a valid selection! Please search again.").queue();
+								channel.sendMessage("Not a valid selection! Please start your search again.").queue();
 								return;
 							}},
 						30, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());

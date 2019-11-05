@@ -51,11 +51,11 @@ public class YoutubeHandler {
 		}
 	}
 
-	public static ArrayList<YoutubeSearchInfo> search(String query)
+	public static ArrayList<YoutubeSearchInfo> searchVideos(String query)
 			throws GeneralSecurityException, IOException, GoogleJsonResponseException {
 		YouTube youtubeService = getService();
 		YouTube.Search.List request = youtubeService.search().list("snippet");
-		SearchListResponse response = request.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).execute();
+		SearchListResponse response = request.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).setType("video").execute();
 		ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
 		List<SearchResult> results = response.getItems();
 		for (SearchResult result : results) {
