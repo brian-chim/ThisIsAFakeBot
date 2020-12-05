@@ -6,6 +6,8 @@ import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.etc.GoodnightCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.CurrCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.ExportYTPCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.ImportYTPCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ListCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.LoopCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
@@ -32,6 +34,8 @@ public class CommandHandler extends ListenerAdapter {
 		handledCommands.add(new CurrCommand());
 		handledCommands.add(new StopCommand());
 		handledCommands.add(new LoopCommand());
+		handledCommands.add(new ExportYTPCommand());
+		handledCommands.add(new ImportYTPCommand());
 		// points
 		handledCommands.add(new GetPointsCommand());
 	}

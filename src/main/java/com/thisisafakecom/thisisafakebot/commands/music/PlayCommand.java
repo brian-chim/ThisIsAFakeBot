@@ -57,7 +57,7 @@ public class PlayCommand extends CommandAbstract {
 			URL testUrl = new URL(urlOrSearch);
 			testUrl.toURI();
 			isUrl = true;
-		} catch (Exception e) {;}
+		} catch (Exception e) {System.err.println("not a url");}
 		if (isUrl) {
 			loadAndPlay(textChannel, urlOrSearch);
 			return;
@@ -86,10 +86,10 @@ public class PlayCommand extends CommandAbstract {
 						&& e.getChannel().equals(input.getChannel())
 						&& !e.getMessage().equals(input),
 						e -> {
-							int test = isValidSelection(e.getMessage(), vidList.size());
-							if (test > 0) {
+							int num = isValidSelection(e.getMessage(), vidList.size());
+							if (num > 0) {
 								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + 
-										vidList.get(isValidSelection(e.getMessage(), vidList.size()) - 1).videoId);	
+										vidList.get(num - 1).videoId);
 							} else {
 								if (!e.getMessage().getContentRaw().startsWith(App.botPrefix)) {
 									channel.sendMessage("Not a valid selection! Please start your search again.").queue();
@@ -101,6 +101,7 @@ public class PlayCommand extends CommandAbstract {
 			} catch (Exception e) {
 				// TODO failing possibly because search result does not contain given value ex. videoId if not video
 				// maybe a movie?
+				e.printStackTrace();
 				channel.sendMessage("Failed to search.").queue();
 				return;
 			}
@@ -119,11 +120,12 @@ public class PlayCommand extends CommandAbstract {
 		GuildMusicManager musicManager = mh.getGuildAudioPlayer(channel.getGuild());
 		
 		mh.getAudioPlayerManager().loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
+			@Override
 			public void trackLoaded(AudioTrack track) {
 				channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
 	        	play(channel.getGuild(), musicManager, track);
 			}
-
+			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
 				AudioTrack firstTrack = playlist.getSelectedTrack();
 		        if (firstTrack == null) {
@@ -132,11 +134,11 @@ public class PlayCommand extends CommandAbstract {
 		        channel.sendMessage("Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")").queue();
 		        play(channel.getGuild(), musicManager, firstTrack);
 		      }
-
+			@Override
 			public void noMatches() {
 				channel.sendMessage("Nothing found by " + trackUrl).queue();
 			}
-
+			@Override
 		    public void loadFailed(FriendlyException exception) {
 		    	channel.sendMessage("Could not play: " + exception.getMessage()).queue();
 		    }
@@ -154,7 +156,7 @@ public class PlayCommand extends CommandAbstract {
 			if (toTest >= 1 && toTest <= max) {
 				return toTest;
 			}
-		} catch (Exception e) {;}
+		} catch (Exception e) {e.printStackTrace();}
 		return -1;
 	}
 }

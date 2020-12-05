@@ -2,6 +2,7 @@ package com.thisisafakecom.thisisafakebot.commands.music.handlers;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
+import java.nio.Buffer;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 import java.nio.ByteBuffer;
@@ -11,7 +12,6 @@ import java.nio.ByteBuffer;
  * before every call to provide20MsAudio(), we pull the frame in canProvide() and use the frame we already pulled in
  * provide20MsAudio().
  */
-// Credit: https://github.com/sedmelluq/lavaplayer/blob/master/demo-jda/src/main/java/com/sedmelluq/discord/lavaplayer/demo/jda/AudioPlayerSendHandler.java
 public class AudioPlayerSendHandler implements AudioSendHandler {
   private final AudioPlayer audioPlayer;
   private final ByteBuffer buffer;
@@ -36,7 +36,7 @@ public class AudioPlayerSendHandler implements AudioSendHandler {
   @Override
   public ByteBuffer provide20MsAudio() {
     // flip to make it a read buffer
-    buffer.flip();
+    ((Buffer) buffer).flip();
     return buffer;
   }
 

@@ -1,20 +1,23 @@
 package com.thisisafakecom.thisisafakebot.commands.music;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.CommandAbstract;
 import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
 import com.thisisafakecom.thisisafakebot.commands.music.handlers.GuildMusicManager;
 import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicHandler;
-import com.thisisafakecom.thisisafakebot.commands.music.handlers.MusicUtils;
-
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 
-public class ListCommand extends CommandAbstract {
+public class ExportYTPCommand extends CommandAbstract {
 
-	public ListCommand() {
-		commandHandled = "list";
+	final int CHAR_LIM = 1900;
+
+	public ExportYTPCommand() {
+		commandHandled = "exportytp";
 	}
 
 	@Override
@@ -25,22 +28,28 @@ public class ListCommand extends CommandAbstract {
 		}
 		MusicHandler mh = MusicHandler.getInstance();
 		GuildMusicManager gm = mh.getGuildAudioPlayer(input.getGuild());
-		AudioTrack[] tracks = gm.scheduler.getNextTracks(5);
+		ArrayList<AudioTrack> tracks = gm.scheduler.getAllTracks();
+		LinkedList<String> msgs = new LinkedList<String>();
 		String msg = "";
-		for (int i = 0; i < tracks.length; i++) {
-			if (tracks[i] == null) {
-				break;
+		for (AudioTrack track : tracks) {
+			// in case there are too many songs
+			if (msg.length() >= CHAR_LIM) {
+				msgs.add(msg);
+				msg = "";
 			}
-			msg += i+1 + ". " + MusicUtils.getTrackTitleAndLength(tracks[i]) + "\n";
+			msg += track.getInfo().identifier + ";";
 		}
+		msgs.add(msg);
+		MessageChannel channel = input.getChannel();
 		if (msg.isEmpty()) {
 			msg = "No tracks in queue!";
+			channel.sendMessage(msg).queue();
 		} else {
-			msg += "There is a total of " + gm.scheduler.getNumSongsLeft() + " songs left in the queue.";
-			msg = "```" + msg + "```";
+			for (String m : msgs) {
+				m = "```" + m + "```";
+				channel.sendMessage(m).queue();
+			}
 		}
-		MessageChannel channel = input.getChannel();
-		channel.sendMessage(msg).queue();
 	}
 
 	@Override
