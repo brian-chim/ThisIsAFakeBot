@@ -1,7 +1,5 @@
 package com.thisisafakecom.thisisafakebot.commands.music;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -93,7 +91,9 @@ public class PlayCommand extends CommandAbstract {
 								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + 
 										vidList.get(isValidSelection(e.getMessage(), vidList.size()) - 1).videoId);	
 							} else {
-								channel.sendMessage("Not a valid selection! Please start your search again.").queue();
+								if (!e.getMessage().getContentRaw().startsWith(App.botPrefix)) {
+									channel.sendMessage("Not a valid selection! Please start your search again.").queue();
+								}
 								return;
 							}},
 						30, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());

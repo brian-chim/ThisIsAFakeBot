@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class CommandHandler extends ListenerAdapter {
 
 	private ArrayList<ICommand> handledCommands = new ArrayList<ICommand>();
+	private static final CommandHandler handler = new CommandHandler();
 
 	public CommandHandler() {
 		// etc
@@ -54,5 +55,9 @@ public class CommandHandler extends ListenerAdapter {
 		if (!handled) {
 			throw new CommandNotSupportedException();
 		}
+	}
+    
+	public static CommandHandler getHandler() {
+		return handler;
 	}
 }

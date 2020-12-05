@@ -3,6 +3,8 @@ package com.thisisafakecom.thisisafakebot;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
@@ -12,16 +14,16 @@ import com.thisisafakecom.thisisafakebot.commands.CommandNotSupportedException;
 import com.thisisafakecom.thisisafakebot.commands.points.PointsHandler;
 import com.thisisafakecom.thisisafakebot.database.DBHandler;
 
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class App extends ListenerAdapter {
 
 	public static final String botPrefix = ".";
-	private final CommandHandler ch = new CommandHandler();
+	private final CommandHandler ch = CommandHandler.getHandler();
 	public static EventWaiter waiter = new EventWaiter();
 	
 	public static void main(String[] args) throws LoginException {
@@ -32,7 +34,13 @@ public class App extends ListenerAdapter {
 			System.out.println("Failed to retrieve token.");
 			return;
 		}
-		JDABuilder bot = new JDABuilder(AccountType.BOT);
+		List<GatewayIntent> intents = new ArrayList<GatewayIntent>();
+		intents.add(GatewayIntent.DIRECT_MESSAGE_REACTIONS);
+		intents.add(GatewayIntent.DIRECT_MESSAGES);
+		intents.add(GatewayIntent.GUILD_MESSAGE_REACTIONS);
+		intents.add(GatewayIntent.GUILD_MESSAGES);
+		intents.add(GatewayIntent.GUILD_VOICE_STATES);
+		JDABuilder bot = JDABuilder.create(intents);
 		bot.setToken(token);
 		bot.addEventListeners(new App(), waiter);
 		bot.build();
