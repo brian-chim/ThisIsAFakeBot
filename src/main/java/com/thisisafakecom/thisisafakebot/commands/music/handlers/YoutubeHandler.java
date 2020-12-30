@@ -17,12 +17,15 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class YoutubeHandler {
@@ -54,12 +57,23 @@ public class YoutubeHandler {
 	public static ArrayList<YoutubeSearchInfo> searchVideos(String query)
 			throws GeneralSecurityException, IOException, GoogleJsonResponseException {
 		YouTube youtubeService = getService();
-		YouTube.Search.List request = youtubeService.search().list("snippet");
-		SearchListResponse response = request.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).setType("video").execute();
+		YouTube.Search.List listVids = youtubeService.search().list("snippet");
+		SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).setType("video").execute();
 		ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
-		List<SearchResult> results = response.getItems();
-		for (SearchResult result : results) {
-			returnInfo.add(new YoutubeSearchInfo(result.getId().getVideoId(), result.getSnippet().getTitle()));
+		List<SearchResult> listVidResults = listVidsResp.getItems();
+		String vidIds = "";
+		for (SearchResult result : listVidResults) {
+			vidIds += result.getId().getVideoId() + ",";
+		}
+		vidIds = vidIds.substring(0, vidIds.length() - 1);
+		YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
+		VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
+		HashMap<String, String> vidAndDuration = new HashMap<>();
+		for (Video vid : listVidInfoResp.getItems()) {
+			vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
+		}
+		for (SearchResult result : listVidResults) {
+			returnInfo.add(new YoutubeSearchInfo(result.getId().getVideoId(), result.getSnippet().getTitle(), vidAndDuration.get(result.getId().getVideoId())));
 		}
 		return returnInfo;
 	}

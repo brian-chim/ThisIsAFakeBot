@@ -1,6 +1,7 @@
 package com.thisisafakecom.thisisafakebot.commands.music;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +23,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 
 public class PlayCommand extends CommandAbstract {
 
@@ -68,39 +69,45 @@ public class PlayCommand extends CommandAbstract {
 				String msg = "";
 				for (int i = 0; i < vidList.size(); i++) {
 					String title = vidList.get(i).videoTitle;
-					if (title.length() >= 60) {
-						title = title.substring(0, 58);
+					if (title.length() >= 50) {
+						title = title.substring(0, 48);
 						title += "...";
-					} else {
-						while (title.length() < 60) {
-							title += " ";
-						}	
 					}
+					Duration dur = Duration.parse(vidList.get(i).videoLength);
+					title += "    (" + dur.getSeconds() / 60 + ":" + dur.getSeconds() % 60 + ")";
 					msg += "```" + (i+1) + ":   " + title + "```";
 				}
-				// TODO make a selection using the number emojis?
-				channel.sendMessage("Make a selection using 1-" + vidList.size()).queue();
-				channel.sendMessage(msg).queue();
-				App.waiter.waitForEvent(MessageReceivedEvent.class,
-						e -> e.getAuthor().equals(input.getAuthor())
-						&& e.getChannel().equals(input.getChannel())
-						&& !e.getMessage().equals(input),
+				channel.sendMessage("Make a selection using the corresponding reaction.").queue();
+				String unicodes = "";
+				for (int i = 1; i < vidList.size() + 1; i++) {
+					// https://unicode.org/emoji/charts/full-emoji-list.html#0031_fe0f_20e3
+					// keycaps
+					String temp = "U+3" + i + "U+fe0fU+20e3";
+					unicodes += temp + " ";
+				}
+				channel.sendMessage(msg).queue(
+						choices -> {
+							// add the appropriate reactions
+							for (int i = 1; i < vidList.size() + 1; i++) {
+								// https://unicode.org/emoji/charts/full-emoji-list.html#0031_fe0f_20e3
+								// keycaps
+								String temp = "U+3" + i + "U+fe0fU+20e3";
+								choices.addReaction(temp).queue();
+							}
+						});
+				final String u = unicodes;
+				App.waiter.waitForEvent(GenericGuildMessageReactionEvent.class,
+						e -> e.getUser().equals(input.getAuthor())
+						&& e.getReaction().getChannel().equals(input.getChannel())
+						&& u.contains(e.getReactionEmote().getAsCodepoints()),
 						e -> {
-							int num = isValidSelection(e.getMessage(), vidList.size());
-							if (num > 0) {
-								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + 
-										vidList.get(num - 1).videoId);
-							} else {
-								if (!e.getMessage().getContentRaw().startsWith(App.botPrefix)) {
-									channel.sendMessage("Not a valid selection! Please start your search again.").queue();
-								}
+								int num = Integer.parseInt(e.getReactionEmote().getAsCodepoints().substring(3, 4));
+								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + vidList.get(num - 1).videoId);
 								return;
-							}},
-						30, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
+							},
+						45, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
 				return;
 			} catch (Exception e) {
-				// TODO failing possibly because search result does not contain given value ex. videoId if not video
-				// maybe a movie?
 				e.printStackTrace();
 				channel.sendMessage("Failed to search.").queue();
 				return;
@@ -148,15 +155,5 @@ public class PlayCommand extends CommandAbstract {
 	private void play(Guild guild, GuildMusicManager musicManager, AudioTrack track) {
 		guild.getAudioManager().openAudioConnection(vc);
 		musicManager.scheduler.queue(track);
-	}
-
-	private int isValidSelection(Message input, int max) {
-		try {
-			int toTest = Integer.parseInt(input.getContentRaw());
-			if (toTest >= 1 && toTest <= max) {
-				return toTest;
-			}
-		} catch (Exception e) {e.printStackTrace();}
-		return -1;
 	}
 }
