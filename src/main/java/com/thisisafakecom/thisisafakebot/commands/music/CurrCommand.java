@@ -37,4 +37,11 @@ public class CurrCommand extends CommandAbstract {
 	    channel.sendMessage(msg).queue();
 	}
 
+	@Override
+	public String commandDescription() {
+		String ret = "Shows the currently playing song.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
+
 }

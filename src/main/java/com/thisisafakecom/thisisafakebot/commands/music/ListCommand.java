@@ -49,4 +49,11 @@ public class ListCommand extends CommandAbstract {
 	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
 	    channel.sendMessage(msg).queue();
 	}
+
+	@Override
+	public String commandDescription() {
+		String ret = "Lists the next 5 songs with their name and the total number of songs in the playlist.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
 }

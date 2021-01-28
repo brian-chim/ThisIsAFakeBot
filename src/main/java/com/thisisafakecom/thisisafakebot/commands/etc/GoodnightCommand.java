@@ -32,4 +32,10 @@ public class GoodnightCommand extends CommandAbstract {
 		channel.sendMessage(msg).queue();
 	}
 
+	public String commandDescription() {
+		String ret = "Says goodnight to you :)\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
+
 }

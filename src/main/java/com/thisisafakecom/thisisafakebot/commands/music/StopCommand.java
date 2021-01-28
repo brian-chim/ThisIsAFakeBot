@@ -42,4 +42,11 @@ public class StopCommand extends CommandAbstract {
 	    channel.sendMessage(msg).queue();
 	}
 
+	@Override
+	public String commandDescription() {
+		String ret = "Removes all songs from the playlist and stops the bot.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
+
 }

@@ -38,4 +38,10 @@ public class SkipCommand extends CommandAbstract {
 	    GuildMusicManager musicManager = mh.getGuildAudioPlayer(channel.getGuild());
 	    musicManager.scheduler.nextTrack();
 	}
+	@Override
+	public String commandDescription() {
+		String ret = "Skips the currently playing song.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
 }

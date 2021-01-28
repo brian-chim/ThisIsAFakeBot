@@ -38,4 +38,11 @@ public class LoopCommand extends CommandAbstract {
 	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
 	    channel.sendMessage(msg).queue();
 	}
+
+	@Override
+	public String commandDescription() {
+		String ret = "Set the bot to loop / stop looping through your music.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
+	}
 }

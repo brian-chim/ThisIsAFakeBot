@@ -37,4 +37,11 @@ public class GetPointsCommand extends CommandAbstract {
     channel.sendMessage(msg).queue();
   }
 
+@Override
+public String commandDescription() {
+	String ret = "Lists the number of points you have.\n"
+			+ "Usage: " + App.botPrefix + commandHandled;
+	return ret;
+}
+
 }

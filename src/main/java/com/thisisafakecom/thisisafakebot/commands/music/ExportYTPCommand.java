@@ -14,8 +14,6 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class ExportYTPCommand extends CommandAbstract {
 
-	final int CHAR_LIM = 1900;
-
 	public ExportYTPCommand() {
 		commandHandled = "exportytp";
 	}
@@ -33,7 +31,7 @@ public class ExportYTPCommand extends CommandAbstract {
 		String msg = "";
 		for (AudioTrack track : tracks) {
 			// in case there are too many songs
-			if (msg.length() >= CHAR_LIM) {
+			if (msg.length() >= Message.MAX_CONTENT_LENGTH) {
 				msgs.add(msg);
 				msg = "";
 			}
@@ -57,5 +55,13 @@ public class ExportYTPCommand extends CommandAbstract {
 	    MessageChannel channel = input.getChannel();
 	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
 	    channel.sendMessage(msg).queue();
+	}
+
+	@Override
+	public String commandDescription() {
+		String ret = "Exports the current playlist (assuming everything is from youtube).\n"
+				+ "Copy and paste the output into the importytp command to reload the playlist.\n"
+				+ "Usage: " + App.botPrefix + commandHandled;
+		return ret;
 	}
 }

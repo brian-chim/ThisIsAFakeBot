@@ -85,6 +85,7 @@ public class PlayCommand extends CommandAbstract {
 					String temp = "U+3" + i + "U+fe0fU+20e3";
 					unicodes += temp + " ";
 				}
+				final String u = unicodes;
 				channel.sendMessage(msg).queue(
 						choices -> {
 							// add the appropriate reactions
@@ -94,18 +95,19 @@ public class PlayCommand extends CommandAbstract {
 								String temp = "U+3" + i + "U+fe0fU+20e3";
 								choices.addReaction(temp).queue();
 							}
+							long callbackMsgId = choices.getIdLong();
+							App.waiter.waitForEvent(GenericGuildMessageReactionEvent.class,
+									e -> e.getUser().equals(input.getAuthor())
+									&& e.getReaction().getChannel().equals(input.getChannel())
+									&& u.contains(e.getReactionEmote().getAsCodepoints())
+									&& e.getMessageIdLong() == callbackMsgId,
+									e -> {
+											int num = Integer.parseInt(e.getReactionEmote().getAsCodepoints().substring(3, 4));
+											loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + vidList.get(num - 1).videoId);
+											return;
+										},
+									45, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
 						});
-				final String u = unicodes;
-				App.waiter.waitForEvent(GenericGuildMessageReactionEvent.class,
-						e -> e.getUser().equals(input.getAuthor())
-						&& e.getReaction().getChannel().equals(input.getChannel())
-						&& u.contains(e.getReactionEmote().getAsCodepoints()),
-						e -> {
-								int num = Integer.parseInt(e.getReactionEmote().getAsCodepoints().substring(3, 4));
-								loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + vidList.get(num - 1).videoId);
-								return;
-							},
-						45, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -155,5 +157,12 @@ public class PlayCommand extends CommandAbstract {
 	private void play(Guild guild, GuildMusicManager musicManager, AudioTrack track) {
 		guild.getAudioManager().openAudioConnection(vc);
 		musicManager.scheduler.queue(track);
+	}
+
+	@Override
+	public String commandDescription() {
+		String ret = "Plays a song from a youtube URL or searches for one off given keywords.\n"
+				+ "Usage: " + App.botPrefix + commandHandled + " [youtube URL OR search terms]";
+		return ret;
 	}
 }

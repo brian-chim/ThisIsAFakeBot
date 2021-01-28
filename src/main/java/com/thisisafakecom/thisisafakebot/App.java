@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class App extends ListenerAdapter {
 
-	public static final String botPrefix = ".";
+	public static final String botPrefix = "-";
 	private final CommandHandler ch = CommandHandler.getHandler();
 	public static EventWaiter waiter = new EventWaiter();
 	

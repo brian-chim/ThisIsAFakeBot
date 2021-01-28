@@ -41,4 +41,11 @@ public class RepeatCommand extends CommandAbstract {
     String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + " [your message here] " + "[number of repetitions]``";
     channel.sendMessage(msg).queue();
   }
+
+@Override
+public String commandDescription() {
+	String ret = "Repeats your message a number of times.\n"
+			+ "Usage: " + App.botPrefix + commandHandled + " [your message here] + [number of repetitions]";
+	return ret;
+}
 }
