@@ -16,7 +16,9 @@ import com.thisisafakecom.thisisafakebot.commands.music.LoopCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.SkipCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.BetCoinCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.GivePointsCommand;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -40,7 +42,9 @@ public class CommandHandler extends ListenerAdapter {
 		musicCommands.add(new ExportYTPCommand());
 		musicCommands.add(new ImportYTPCommand());
 		// points
+		pointsCommands.add(new GivePointsCommand());
 		pointsCommands.add(new GetPointsCommand());
+		pointsCommands.add(new BetCoinCommand());
 		// etc
 		etcCommands.add(new RepeatCommand());
 		etcCommands.add(new ChooseCommand());

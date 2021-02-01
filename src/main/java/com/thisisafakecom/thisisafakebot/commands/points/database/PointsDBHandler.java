@@ -77,4 +77,29 @@ public class PointsDBHandler {
     }
     return false;
   }
+
+  public static boolean removePoints(User user, int pointsToRemove) throws NegativePointsException {
+	  	int existingPts = getPoints(user);
+	  	if (existingPts < pointsToRemove) {
+	  		throw new NegativePointsException();
+	  	}
+	    String sql = "UPDATE PointsTable SET Points = Points - ? WHERE ID = ?";
+	    try (Connection conn = DBHandler.connect();
+	        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(2, user.getId());
+	        pstmt.setInt(1, pointsToRemove);
+	        // check if one record was updated
+	        int update = pstmt.executeUpdate();
+	        DBHandler.close(conn, pstmt);
+	        if(update == 0) {
+	          // if nothing was updated then that means user wasnt in the table but getPoints shouldve created them
+	           return false;
+	        }
+	        // return true if statement was executed as wanted
+	        return true;
+	    } catch (SQLException e) {
+	      System.out.println(e.getMessage());
+	    }
+	    return false;
+	  }
 }

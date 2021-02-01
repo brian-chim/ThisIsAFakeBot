@@ -15,6 +15,7 @@ import com.thisisafakecom.thisisafakebot.commands.points.PointsHandler;
 import com.thisisafakecom.thisisafakebot.database.DBHandler;
 
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -41,6 +42,8 @@ public class App extends ListenerAdapter {
 		intents.add(GatewayIntent.GUILD_MESSAGES);
 		intents.add(GatewayIntent.GUILD_VOICE_STATES);
 		JDABuilder bot = JDABuilder.create(intents);
+		Activity activity = Activity.playing("Existential Crisis (-help)");
+		bot.setActivity(activity);
 		bot.setToken(token);
 		bot.addEventListeners(new App(), waiter);
 		bot.build();
