@@ -29,7 +29,7 @@ public class ChooseCommand extends CommandAbstract {
 				Random r = new Random();
 				selection = r.nextInt(options.length);
 			}
-			String choice = options[selection];
+			String choice = options[selection].trim().replaceAll("\\s+", " ");
 			String msg = input.getAuthor().getAsMention() + ": I choose " + choice + ".";
 			MessageChannel channel = input.getChannel();
 			channel.sendMessage(msg).queue();

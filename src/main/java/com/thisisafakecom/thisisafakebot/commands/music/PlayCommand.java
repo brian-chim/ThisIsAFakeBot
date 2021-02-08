@@ -74,6 +74,8 @@ public class PlayCommand extends CommandAbstract {
 						title += "...";
 					}
 					Duration dur = Duration.parse(vidList.get(i).videoLength);
+					String seconds = String.valueOf(dur.getSeconds() % 60);
+					seconds = seconds.length() == 1 ? "0" + seconds : seconds;
 					title += "    (" + dur.getSeconds() / 60 + ":" + dur.getSeconds() % 60 + ")";
 					msg += "```" + (i+1) + ":   " + title + "```";
 				}
@@ -106,7 +108,7 @@ public class PlayCommand extends CommandAbstract {
 											loadAndPlay(textChannel, "https://www.youtube.com/watch?v=" + vidList.get(num - 1).videoId);
 											return;
 										},
-									45, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
+									20, TimeUnit.SECONDS, () -> channel.sendMessage("No selection picked in time!").queue());
 						});
 				return;
 			} catch (Exception e) {

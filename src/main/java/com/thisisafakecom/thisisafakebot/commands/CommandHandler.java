@@ -14,11 +14,13 @@ import com.thisisafakecom.thisisafakebot.commands.music.ImportYTPCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ListCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.LoopCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.ShuffleCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.SkipCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.BetCoinCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GivePointsCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.trivia.TriviaCommand;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -38,10 +40,12 @@ public class CommandHandler extends ListenerAdapter {
 		musicCommands.add(new SkipCommand());
 		musicCommands.add(new CurrCommand());
 		musicCommands.add(new StopCommand());
+		musicCommands.add(new ShuffleCommand());
 		musicCommands.add(new LoopCommand());
 		musicCommands.add(new ExportYTPCommand());
 		musicCommands.add(new ImportYTPCommand());
 		// points
+		pointsCommands.add(new TriviaCommand());
 		pointsCommands.add(new GivePointsCommand());
 		pointsCommands.add(new GetPointsCommand());
 		pointsCommands.add(new BetCoinCommand());
