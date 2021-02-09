@@ -20,6 +20,7 @@ import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.BetCoinCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GivePointsCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.StartRaceCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.trivia.TriviaCommand;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -49,6 +50,7 @@ public class CommandHandler extends ListenerAdapter {
 		pointsCommands.add(new GivePointsCommand());
 		pointsCommands.add(new GetPointsCommand());
 		pointsCommands.add(new BetCoinCommand());
+		pointsCommands.add(new StartRaceCommand());
 		// etc
 		etcCommands.add(new RepeatCommand());
 		etcCommands.add(new ChooseCommand());
