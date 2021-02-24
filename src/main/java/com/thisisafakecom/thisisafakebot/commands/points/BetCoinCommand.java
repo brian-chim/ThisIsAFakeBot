@@ -8,6 +8,7 @@ import com.thisisafakecom.thisisafakebot.commands.IncorrectUsageException;
 import com.thisisafakecom.thisisafakebot.commands.points.database.NegativePointsException;
 import com.thisisafakecom.thisisafakebot.commands.points.database.PointsDBHandler;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -25,6 +26,8 @@ public class BetCoinCommand extends CommandAbstract {
     if(tokenized.length != 3) {
       throw new IncorrectUsageException();
     } else {
+      EmbedBuilder builder = new EmbedBuilder();
+      builder.setFooter("https://github.com/brian-chim/ThisIsAFakeBot");
       MessageChannel channel = input.getChannel();
       User author = input.getAuthor();
       String[] content = input.getContentRaw().split(" ");
@@ -46,7 +49,14 @@ public class BetCoinCommand extends CommandAbstract {
       }
       Random rand = new Random();
       int winnerNum = rand.nextInt(2);
-      String winner = winnerNum == 0 ? "Heads" : "Tails";
+      String winner;
+      if (winnerNum == 0) {
+        winner = "Heads";
+        builder.setImage("https://raw.githubusercontent.com/brian-chim/ThisIsAFakeBot/master/src/resources/points/betcoin/heads.png");
+      } else {
+        winner = "Tails";
+        builder.setImage("https://raw.githubusercontent.com/brian-chim/ThisIsAFakeBot/master/src/resources/points/betcoin/tails.png");
+      }
       String msg = "The coin landed " + winner + "! ";
       if (winnerNum == choice) {
     	  PointsDBHandler.addPoints(author, numPts);
@@ -62,7 +72,8 @@ public class BetCoinCommand extends CommandAbstract {
     	  msg += "You lost " + numPts + " points!";
       }
       msg += " You now have " + PointsDBHandler.getPoints(author) + " points.";
-      channel.sendMessage(msg).queue();
+      builder.setDescription(msg);
+      channel.sendMessage(builder.build()).queue();
     }
   }
 

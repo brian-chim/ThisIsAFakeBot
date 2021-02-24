@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 
 import com.thisisafakecom.thisisafakebot.App;
 import com.thisisafakecom.thisisafakebot.commands.etc.ChooseCommand;
+import com.thisisafakecom.thisisafakebot.commands.etc.EightBallCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.GoodnightCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.HelpCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
@@ -52,6 +53,7 @@ public class CommandHandler extends ListenerAdapter {
 		pointsCommands.add(new BetCoinCommand());
 		pointsCommands.add(new StartRaceCommand());
 		// etc
+		etcCommands.add(new EightBallCommand());
 		etcCommands.add(new RepeatCommand());
 		etcCommands.add(new ChooseCommand());
 		etcCommands.add(new GoodnightCommand());
