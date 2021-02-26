@@ -15,6 +15,7 @@ import com.thisisafakecom.thisisafakebot.commands.music.ImportYTPCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ListCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.LoopCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.PlayCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.PlayNowCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ShuffleCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.SkipCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
@@ -38,6 +39,7 @@ public class CommandHandler extends ListenerAdapter {
 	public CommandHandler() {
 		// music
 		musicCommands.add(new PlayCommand());
+		musicCommands.add(new PlayNowCommand());
 		musicCommands.add(new ListCommand());
 		musicCommands.add(new SkipCommand());
 		musicCommands.add(new CurrCommand());

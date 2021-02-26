@@ -16,8 +16,6 @@ import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactio
 
 public class HelpCommand extends CommandAbstract {
 
-	int currentPage = 1;
-	boolean active = false;
 	int curr = 0;
 	String leftArrowUnicode = "U+2b05";
 	String rightArrowUnicode = "U+27a1";

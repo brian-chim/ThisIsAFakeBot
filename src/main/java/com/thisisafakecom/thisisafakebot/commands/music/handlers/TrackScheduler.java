@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -18,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 // Credit: https://github.com/sedmelluq/lavaplayer/blob/master/demo-jda/src/main/java/com/sedmelluq/discord/lavaplayer/demo/jda/TrackScheduler.java
 public class TrackScheduler extends AudioEventAdapter {
   private final AudioPlayer player;
-  private final BlockingQueue<AudioTrack> queue;
+  private final BlockingDeque<AudioTrack> queue;
   private AudioTrack currentTrack;
   private boolean loop = false;
   
@@ -27,7 +29,7 @@ public class TrackScheduler extends AudioEventAdapter {
    */
   public TrackScheduler(AudioPlayer player) {
     this.player = player;
-    this.queue = new LinkedBlockingQueue<>();
+    this.queue = new LinkedBlockingDeque<>();
   }
 
   /**
@@ -46,6 +48,14 @@ public class TrackScheduler extends AudioEventAdapter {
     }
   }
 
+  public void queueNow(AudioTrack track) {
+      if (currentTrack != null) {
+        queue.offerFirst(currentTrack.makeClone());
+      }
+      currentTrack = track;
+      player.startTrack(track, false);
+  }
+
   /**
    * Start the next track, stopping the current one if it is playing.
    */
@@ -60,8 +70,8 @@ public class TrackScheduler extends AudioEventAdapter {
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     // Only start the next track if the end reason is suitable for it (FINISHED or LOAD_FAILED)
     if (endReason.mayStartNext) {
-	  if (loop) {
-		queue.offer(track.makeClone());
+      if (loop && endReason != AudioTrackEndReason.LOAD_FAILED) {
+         queue.offer(track.makeClone());
       }
       nextTrack();
     }
@@ -111,11 +121,7 @@ public class TrackScheduler extends AudioEventAdapter {
   }
   
   public int getNumSongsLeft() {
-	  int curr = 0;
-	  if (currentTrack != null) {
-		  curr = 1;
-	  }
-	  return queue.size() + curr;
+	  return (currentTrack != null ? queue.size() + 1 : queue.size());
   }
   
   public void shuffleQueue() {

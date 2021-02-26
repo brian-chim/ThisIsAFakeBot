@@ -25,13 +25,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 
-public class PlayCommand extends CommandAbstract {
+public class PlayNowCommand extends CommandAbstract {
 
 	private VoiceChannel vc;
 
-	// Credit: https://github.com/sedmelluq/lavaplayer/blob/master/demo-jda/src/main/java/com/sedmelluq/discord/lavaplayer/demo/jda/Main.java
-	public PlayCommand() {
-		commandHandled = "play";
+	public PlayNowCommand() {
+		commandHandled = "playnow";
 	}
 
 	@Override
@@ -133,17 +132,19 @@ public class PlayCommand extends CommandAbstract {
 		mh.getAudioPlayerManager().loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 			@Override
 			public void trackLoaded(AudioTrack track) {
-				channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
-	        	play(channel.getGuild(), musicManager, track);
+				channel.sendMessage("Playing now: " + track.getInfo().title).queue();
+	        	playNow(channel.getGuild(), musicManager, track);
 			}
 			@Override
 			public void playlistLoaded(AudioPlaylist playlist) {
-			  for (AudioTrack track : playlist.getTracks()) {
-			    play(channel.getGuild(), musicManager, track);
-			  }
-        channel.sendMessage("Added " + playlist.getTracks().size() + " songs to queue from " + playlist.getName() + ".").queue();
-			}
-
+				AudioTrack firstTrack = playlist.getSelectedTrack();
+        if (firstTrack == null) {
+          firstTrack = playlist.getTracks().get(0);
+        }
+        channel.sendMessage("Playing now: " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")\n"
+            + "Use -play [playlist url] to add all the songs in the playlist into the queue!").queue();
+        playNow(channel.getGuild(), musicManager, firstTrack);
+      }
 			@Override
 			public void noMatches() {
 				channel.sendMessage("Nothing found by " + trackUrl).queue();
@@ -155,14 +156,14 @@ public class PlayCommand extends CommandAbstract {
 	    });
 	}
 
-	private void play(Guild guild, GuildMusicManager musicManager, AudioTrack track) {
+	private void playNow(Guild guild, GuildMusicManager musicManager, AudioTrack track) {
 		guild.getAudioManager().openAudioConnection(vc);
-		musicManager.scheduler.queue(track);
+		musicManager.scheduler.queueNow(track);
 	}
 
 	@Override
 	public String commandDescription() {
-		String ret = "Plays a song from a youtube URL or searches for one off given keywords.\n"
+		String ret = "Immediately Plays a song from a youtube URL or searches for one off given keywords.\n"
 				+ "Usage: " + App.botPrefix + commandHandled + " [youtube URL OR search terms]";
 		return ret;
 	}
