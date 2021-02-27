@@ -10,9 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This class schedules tracks for the audio player. It contains the queue of tracks.
@@ -129,5 +127,22 @@ public class TrackScheduler extends AudioEventAdapter {
 	  queue.drainTo(temp);
 	  Collections.shuffle(temp);
 	  queue.addAll(temp);
+  }
+  
+  public void removeRangeFromQueue(int start, int end) {
+    end = end > queue.size() + 1 ? queue.size() + 1 : end;
+    if (start <= end) {
+      List<AudioTrack> temp = new ArrayList<AudioTrack>();
+      List<AudioTrack> newQueue = new ArrayList<AudioTrack>();
+      queue.drainTo(temp);
+      // note need to offset by 2 because currTrack is not stored in the actual queue and user is off by one
+      for (int i = 0; i < start - 2; i++) {
+        newQueue.add(temp.get(i));
+      }
+      for (int j = end - 1; j < temp.size(); j++) {
+        newQueue.add(temp.get(j));
+      }
+      queue.addAll(newQueue);
+    }
   }
 }
