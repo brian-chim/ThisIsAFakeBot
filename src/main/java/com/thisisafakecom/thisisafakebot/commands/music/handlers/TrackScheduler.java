@@ -103,7 +103,7 @@ public class TrackScheduler extends AudioEventAdapter {
   public int clearQueue() {
 	  int removedCount = queue.size();
 	  queue.clear();
-	  return removedCount + 1;
+    return (currentTrack != null ? removedCount + 1 : removedCount);
   }
 
   public AudioTrack getCurrentTrack() {

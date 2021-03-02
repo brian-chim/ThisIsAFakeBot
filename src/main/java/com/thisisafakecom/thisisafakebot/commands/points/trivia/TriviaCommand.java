@@ -24,16 +24,18 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
 public class TriviaCommand extends CommandAbstract {
 
 	Map<User, Integer> winners;
-	int delayValue = 20;
+	int delayValue = 5;
 	int currDelay;
-	Set<User> answeredOnce;
-	Set<User> answeredMore;
+	Set<User> answeredWrong;
 	Set<User> answeredCorrect;
+	long completeId = -1;
+	String completeMsg = "Trivia Complete!";
 	
 	public TriviaCommand() {
 		commandHandled = "trivia";
@@ -47,89 +49,85 @@ public class TriviaCommand extends CommandAbstract {
 		} else {
 			// -trivia
 			TextChannel channel = input.getTextChannel();
+			Message start = channel.sendMessage("Trivia is starting!").complete();
+			completeId = -1;
 			// make a call to get a trivia question
 			TriviaHandler th = TriviaHandler.getInstance();
 			GuildTriviaManager triviaManager = th.getGuildTriviaManager(channel.getGuild());
 			ArrayList<TriviaQuestion> questions = triviaManager.getVideogameQuestions();
 			winners = new HashMap<User, Integer>();
 			for (int i = 1; i <= questions.size(); i++) {
-				TriviaQuestion curr = questions.get(i - 1);
-				ArrayList<String> possibleAnswers = curr.incorrect_answers;
-				possibleAnswers.add(curr.correct_answer);
-				Collections.shuffle(possibleAnswers);
-				possibleAnswers.replaceAll(StringEscapeUtils::unescapeHtml4);
-				curr.question = StringEscapeUtils.unescapeHtml4(curr.question);
-				curr.correct_answer = StringEscapeUtils.unescapeHtml4(curr.correct_answer);
-				String msg = "Question " + i + " of " + questions.size() + ": " + curr.question + "\n";
-				for (int j = 1; j < possibleAnswers.size() + 1; j++) {
-					msg += j + ": " + possibleAnswers.get(j - 1) + "\n";
-				}
-				final String msgBase = msg;
-				// if first message then send right away else queue it to send in 30 seconds
-				currDelay = (i - 1) * delayValue;
-				channel.sendMessage(msg).queueAfter(currDelay, TimeUnit.SECONDS,
-						sent -> {
-							for (int k = 1; k < possibleAnswers.size() + 1; k++) {
-								String temp = "U+3" + k + "U+fe0fU+20e3";
-								sent.addReaction(temp).queue();
-							}
-							int corrAnswer = possibleAnswers.indexOf(curr.correct_answer) + 1;
-//							System.out.println("Answer is " + corrAnswer);
-							String msgAnswer = "The correct answer was " + corrAnswer + ": " + possibleAnswers.get(corrAnswer - 1);
-							final String msgFinal = msgBase + msgAnswer;
-							sent.editMessage(msgFinal).queueAfter(delayValue, TimeUnit.SECONDS);
-							long callbackMsgId = sent.getIdLong();
-							App.waiter.waitForEvent(GuildMessageUpdateEvent.class,
-									update -> update.getAuthor().equals(sent.getAuthor())
-									&& update.getMessage().getContentRaw().contains(msgFinal)
-									&& update.getMessageIdLong() == callbackMsgId,
-									update -> {
-										// this doesnt return me the current reactions because message object wasnt updated?
-										//	List<MessageReaction> reactions = update.getMessage().getReactions();
-										// instead do it by callback
-										channel.retrieveMessageById(update.getMessageIdLong()).queue(
-												(retrievedMsg) -> {
-													List<MessageReaction> reactions = retrievedMsg.getReactions();
-													// enforce that each user can only answer once
-													answeredOnce = new HashSet<User>();
-													answeredMore = new HashSet<User>();
-													answeredCorrect = new HashSet<User>();
-													for (MessageReaction reaction : reactions) {
-														reaction.retrieveUsers().forEachAsync((user) -> {
-															if (reaction.getReactionEmote().getAsCodepoints().substring(3, 4).equals(Integer.toString(corrAnswer))) {
-																answeredCorrect.add(user);
-																updateWinners(user);
-															}
-//															if (answeredOne.contains(user)) {
-//																answeredMore.add(user);
-//															} else {
-//																answeredOne.add(user);
-//																if (reaction.getReactionEmote().getAsCodepoints().substring(3, 4).equals(Integer.toString(corrAnswer))) {
-//																	if (!user.isBot()) {
-//																		answeredCorrect.add(user);
-//																	}
-//																}
-//															}
-															return true;
-														});
-													}
-													answeredCorrect.removeAll(answeredMore);
-													answeredCorrect.forEach((user) -> updateWinners(user));
-												}
-											);
-										},
-									// spacing it out a bit from the edit time
-									delayValue + 5, TimeUnit.SECONDS, () -> System.err.print("Something went wrong in trivia. Failed to wait for the message update."));
-						});
+        currDelay = (i - 1) * delayValue;
+			  oneInstance(questions.get(i - 1), channel, i, questions.size(), start.getAuthor());
 			}
-			String exitMsg = "Trivia Complete!";//\nPoints Gained:\n";
-//			for (User user : winners.keySet()) {
-//				Integer pts = winners.get(user);
-//				exitMsg += user.getName() + ": " + pts + " Points\n";
-//				//PointsDBHandler.addPoints(user, pts.intValue());
-//			}
-			channel.sendMessage(exitMsg).queueAfter(currDelay + delayValue, TimeUnit.SECONDS);
+			App.waiter.waitForEvent(GuildMessageReceivedEvent.class,
+					exit -> exit.getAuthor() == start.getAuthor()
+							&& exit.getMessage().getContentRaw().contains(completeMsg)
+							&& exit.getMessage().getIdLong() == completeId,
+					exit -> {
+						String exitMsg = "Points Gained:\n";
+						for (User user : winners.keySet()) {
+							Integer pts = winners.get(user);
+							exitMsg += user.getName() + ": " + pts + " Points\n";
+							PointsDBHandler.addPoints(user, pts.intValue());
+						}
+						channel.sendMessage(exitMsg).queue();
+					});
 		}
+	}
+
+	public void oneInstance(TriviaQuestion tq, TextChannel channel, int currNum, int totalNum, User bot) {
+    tq.question = StringEscapeUtils.unescapeHtml4(tq.question);
+    tq.correct_answer = StringEscapeUtils.unescapeHtml4(tq.correct_answer);
+    tq.incorrect_answers.replaceAll(StringEscapeUtils::unescapeHtml4);
+    ArrayList<String> possibleAnswers = tq.incorrect_answers;
+    possibleAnswers.add(tq.correct_answer);
+    Collections.shuffle(possibleAnswers);
+    String msg = "Question " + currNum + " of " + totalNum + ": " + tq.question + "\n";
+    for (int j = 1; j < possibleAnswers.size() + 1; j++) {
+      msg += j + ": " + possibleAnswers.get(j - 1) + "\n";
+    }
+    int corrAnswer = possibleAnswers.indexOf(tq.correct_answer) + 1;
+    String msgAnswer = "The correct answer was " + corrAnswer + ": " + possibleAnswers.get(corrAnswer - 1);
+    final String msgFinal = msg + msgAnswer;
+		// send message with question
+	  channel.sendMessage(msg).queueAfter(currDelay, TimeUnit.SECONDS, 
+	      (callback) -> {
+	        // add the reactions in the callback
+          for (int k = 1; k < possibleAnswers.size() + 1; k++) {
+            String temp = "U+3" + k + "U+fe0fU+20e3";
+            callback.addReaction(temp).queue();
+          }
+          // prep the edit
+          callback.editMessage(msgFinal).queueAfter(delayValue, TimeUnit.SECONDS);
+	      });
+	   // tell it to wait for the edit before locking in and adding points
+		App.waiter.waitForEvent(GuildMessageUpdateEvent.class, 
+		    update -> update.getAuthor().equals(bot) &&
+		              update.getMessage().getContentRaw().contains(msgFinal), 
+		    update -> {
+		      Message updateMsg = channel.retrieveMessageById(update.getMessageIdLong()).complete();
+		      List<MessageReaction> reactions = updateMsg.getReactions();
+          answeredWrong = new HashSet<User>();
+          answeredCorrect = new HashSet<User>();
+		      for (MessageReaction r : reactions) {
+		        for (User u : r.retrieveUsers()) {
+		          if (r.getReactionEmote().getAsCodepoints().substring(3, 4).equals(Integer.toString(corrAnswer))) {
+		            answeredCorrect.add(u);
+		          } else {
+		            answeredWrong.add(u);
+		          }
+		        }
+		      }
+		      answeredCorrect.removeAll(answeredWrong);
+		      answeredCorrect.forEach((user) -> updateWinners(user));
+		      // adding a case for final question to signal the end of trivia
+		      if (currNum == totalNum) {
+		        Message complete = channel.sendMessage(completeMsg).complete();
+		        completeId = complete.getIdLong();
+		      }
+		      // offsetting the delay value by a little bit to avoid race condition
+		    }, currDelay + (delayValue * 2), TimeUnit.SECONDS, () -> System.err.println("Something went wrong in trivia. Didnt catch the question update"));
 	}
 
 	public Map<User, Integer> updateWinners(User user) {
