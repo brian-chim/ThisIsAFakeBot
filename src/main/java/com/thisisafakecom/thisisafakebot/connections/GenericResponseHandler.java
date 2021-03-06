@@ -1,4 +1,4 @@
-package com.thisisafakecom.thisisafakebot.commands.points.trivia.handlers;
+package com.thisisafakecom.thisisafakebot.connections;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ public class GenericResponseHandler implements ResponseHandler<String> {
         int status = response.getStatusLine().getStatusCode();
         if (status >= 200 && status < 300) {
             HttpEntity entity = response.getEntity();
-            return entity != null ? EntityUtils.toString(entity) : null;
+            return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
         } else {
             throw new ClientProtocolException("Unexpected response status: " + status);
         }

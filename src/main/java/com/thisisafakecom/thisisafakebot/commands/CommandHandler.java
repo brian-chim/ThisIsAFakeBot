@@ -8,6 +8,7 @@ import com.thisisafakecom.thisisafakebot.commands.etc.ChooseCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.EightBallCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.GoodnightCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.HelpCommand;
+import com.thisisafakecom.thisisafakebot.commands.etc.JokeCommand;
 import com.thisisafakecom.thisisafakebot.commands.etc.RepeatCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.CurrCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ExportYTPCommand;
@@ -55,6 +56,7 @@ public class CommandHandler extends ListenerAdapter {
 		pointsCommands.add(new BetCoinCommand());
 		pointsCommands.add(new StartRaceCommand());
 		// etc
+		etcCommands.add(new JokeCommand());
 		etcCommands.add(new EightBallCommand());
 		etcCommands.add(new RepeatCommand());
 		etcCommands.add(new ChooseCommand());
