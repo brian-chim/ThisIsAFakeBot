@@ -20,6 +20,7 @@ import com.thisisafakecom.thisisafakebot.commands.music.PlayNowCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.ShuffleCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.SkipCommand;
 import com.thisisafakecom.thisisafakebot.commands.music.StopCommand;
+import com.thisisafakecom.thisisafakebot.commands.music.UnendingCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.BetCoinCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GivePointsCommand;
@@ -47,6 +48,7 @@ public class CommandHandler extends ListenerAdapter {
 		musicCommands.add(new StopCommand());
 		musicCommands.add(new ShuffleCommand());
 		musicCommands.add(new LoopCommand());
+		musicCommands.add(new UnendingCommand());
 		musicCommands.add(new ExportYTPCommand());
 		musicCommands.add(new ImportYTPCommand());
 		// points

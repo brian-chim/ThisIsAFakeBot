@@ -52,6 +52,7 @@ public class ListCommand extends CommandAbstract {
       }
       msg += "There is a total of " + gm.scheduler.getNumSongsLeft() + " songs left in the queue.";
       msg += gm.scheduler.getLoop() ? "\n\nLoop is currently enabled." : "";
+      msg += gm.scheduler.getUnending() ? "\n\nPlaylist is currently on unending mode." : "";
       msg = "```" + msg + "```";
       Message msgCallback = channel.sendMessage(msg).complete();
       if (numPages > 1) {

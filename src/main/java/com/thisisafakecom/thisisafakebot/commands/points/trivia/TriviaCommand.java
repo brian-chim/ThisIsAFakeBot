@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 public class TriviaCommand extends CommandAbstract {
 
 	Map<User, Integer> winners;
-	int delayValue = 5;
+	int delayValue = 20;
 	int currDelay;
 	Set<User> answeredWrong;
 	Set<User> answeredCorrect;

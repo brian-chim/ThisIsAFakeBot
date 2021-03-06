@@ -10,10 +10,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 
-public class LoopCommand extends CommandAbstract {
+public class UnendingCommand extends CommandAbstract {
 
-	public LoopCommand() {
-		commandHandled = "loop";
+	public UnendingCommand() {
+		commandHandled = "unending";
 	}
 
 	@Override
@@ -26,12 +26,12 @@ public class LoopCommand extends CommandAbstract {
 			MusicHandler mh = MusicHandler.getInstance();
 			GuildMusicManager gm = mh.getGuildAudioPlayer(guild);
       MessageChannel channel = input.getChannel();
-      if (gm.scheduler.getUnending()) {
-	      channel.sendMessage("You must turn off unending before turning on loop!").queue();
-	      return;
-	    }
-			gm.scheduler.setLoop(!gm.scheduler.getLoop());
-			String msg = "Playlist Loop has been " + (gm.scheduler.getLoop() ? "enabled" : "disabled");
+			if (gm.scheduler.getLoop()) {
+			  channel.sendMessage("You must turn off loop before turning on unending!").queue();
+			  return;
+			}
+			gm.scheduler.setUnending(!gm.scheduler.getUnending());
+			String msg = "Unending playlist has been " + (gm.scheduler.getUnending() ? "enabled" : "disabled");
 			channel.sendMessage(msg).queue();
 		}
 	}
@@ -45,7 +45,7 @@ public class LoopCommand extends CommandAbstract {
 
 	@Override
 	public String commandDescription() {
-		String ret = "Set the bot to loop / stop looping through your music.\n"
+		String ret = "Set the bot to play / stop playing related songs to the last song in the queue.\n"
 				+ "Usage: " + App.botPrefix + commandHandled;
 		return ret;
 	}

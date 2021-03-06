@@ -54,6 +54,40 @@ public class YoutubeHandler {
 		}
 	}
 
+	public static ArrayList<YoutubeSearchInfo> searchRelatedToVideo(String id)
+	    throws GeneralSecurityException, IOException, GeneralSecurityException {
+	  YouTube youtubeService = getService();
+	  YouTube.Search.List listVids = youtubeService.search().list("snippet");
+	  SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(20L).setRelatedToVideoId(id).setType("video").execute();
+	   ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
+	   List<SearchResult> listVidResults = listVidsResp.getItems();
+	    String vidIds = "";
+	    for (SearchResult result : listVidResults) {
+	      vidIds += result.getId().getVideoId() + ",";
+	    }
+	    vidIds = vidIds.substring(0, vidIds.length() - 1);
+	    YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
+	    VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
+	    HashMap<String, String> vidAndDuration = new HashMap<>();
+	    for (Video vid : listVidInfoResp.getItems()) {
+	      vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
+	    }
+	    for (SearchResult result : listVidResults) {
+	      String vidId = result.getId().getVideoId();
+	      String vidTitle;
+	      try {
+	        vidTitle = result.getSnippet().getTitle();
+	        // occasionally, the results seem to not have a snippet attribute so just skip over it
+	        // this doesnt seem to happen when simply searching for a video
+	      } catch (NullPointerException e) {
+	        continue;
+	      }
+	      String vidLength = vidAndDuration.get(vidId);
+	      returnInfo.add(new YoutubeSearchInfo(vidId, vidTitle, vidLength));
+	    }
+    return returnInfo;
+	}
+
 	public static ArrayList<YoutubeSearchInfo> searchVideos(String query)
 			throws GeneralSecurityException, IOException, GoogleJsonResponseException {
 		YouTube youtubeService = getService();
