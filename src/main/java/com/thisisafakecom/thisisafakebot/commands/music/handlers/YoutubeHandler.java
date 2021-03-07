@@ -29,86 +29,90 @@ import java.util.HashMap;
 import java.util.List;
 
 public class YoutubeHandler {
-	private static final String DEVELOPER_KEY = getYoutubeKey();
+  private static final String DEVELOPER_KEY = getYoutubeKey();
 
-	private static final String APPLICATION_NAME = "API code samples";
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+  private static final String APPLICATION_NAME = "API code samples";
+  private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-	/**
-	 * Build and return an authorized API client service.
-	 *
-	 * @return an authorized API client service
-	 * @throws GeneralSecurityException, IOException
-	 */
-	public static YouTube getService() throws GeneralSecurityException, IOException {
-		final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-		return new YouTube.Builder(httpTransport, JSON_FACTORY, null).setApplicationName(APPLICATION_NAME).build();
-	}
+  /**
+   * Build and return an authorized API client service.
+   *
+   * @return an authorized API client service
+   * @throws GeneralSecurityException, IOException
+   */
+  public static YouTube getService() throws GeneralSecurityException, IOException {
+    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    return new YouTube.Builder(httpTransport, JSON_FACTORY, null).setApplicationName(APPLICATION_NAME).build();
+  }
 
-	private static String getYoutubeKey() {
-		try {
-			return new String(Files.readAllBytes(Paths.get("youtube.secret")));
-		} catch (IOException e) {
-			System.out.println("Failed to retrieve YouTube token.");
-			return "";
-		}
-	}
+  private static String getYoutubeKey() {
+    try {
+      return new String(Files.readAllBytes(Paths.get("youtube.secret")));
+    } catch (IOException e) {
+      System.out.println("Failed to retrieve YouTube token.");
+      return "";
+    }
+  }
 
-	public static ArrayList<YoutubeSearchInfo> searchRelatedToVideo(String id)
-	    throws GeneralSecurityException, IOException, GeneralSecurityException {
-	  YouTube youtubeService = getService();
-	  YouTube.Search.List listVids = youtubeService.search().list("snippet");
-	  SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(20L).setRelatedToVideoId(id).setType("video").execute();
-	   ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
-	   List<SearchResult> listVidResults = listVidsResp.getItems();
-	    String vidIds = "";
-	    for (SearchResult result : listVidResults) {
-	      vidIds += result.getId().getVideoId() + ",";
-	    }
-	    vidIds = vidIds.substring(0, vidIds.length() - 1);
-	    YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
-	    VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
-	    HashMap<String, String> vidAndDuration = new HashMap<>();
-	    for (Video vid : listVidInfoResp.getItems()) {
-	      vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
-	    }
-	    for (SearchResult result : listVidResults) {
-	      String vidId = result.getId().getVideoId();
-	      String vidTitle;
-	      try {
-	        vidTitle = result.getSnippet().getTitle();
-	        // occasionally, the results seem to not have a snippet attribute so just skip over it
-	        // this doesnt seem to happen when simply searching for a video
-	      } catch (NullPointerException e) {
-	        continue;
-	      }
-	      String vidLength = vidAndDuration.get(vidId);
-	      returnInfo.add(new YoutubeSearchInfo(vidId, vidTitle, vidLength));
-	    }
+  public static ArrayList<YoutubeSearchInfo> searchRelatedToVideo(String id)
+      throws GeneralSecurityException, IOException, GeneralSecurityException {
+    YouTube youtubeService = getService();
+    YouTube.Search.List listVids = youtubeService.search().list("snippet");
+    SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(20L).setRelatedToVideoId(id)
+        .setType("video").execute();
+    ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
+    List<SearchResult> listVidResults = listVidsResp.getItems();
+    String vidIds = "";
+    for (SearchResult result : listVidResults) {
+      vidIds += result.getId().getVideoId() + ",";
+    }
+    vidIds = vidIds.substring(0, vidIds.length() - 1);
+    YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
+    VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
+    HashMap<String, String> vidAndDuration = new HashMap<>();
+    for (Video vid : listVidInfoResp.getItems()) {
+      vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
+    }
+    for (SearchResult result : listVidResults) {
+      String vidId = result.getId().getVideoId();
+      String vidTitle;
+      try {
+        vidTitle = result.getSnippet().getTitle();
+        // occasionally, the results seem to not have a snippet attribute so just skip
+        // over it
+        // this doesnt seem to happen when simply searching for a video
+      } catch (NullPointerException e) {
+        continue;
+      }
+      String vidLength = vidAndDuration.get(vidId);
+      returnInfo.add(new YoutubeSearchInfo(vidId, vidTitle, vidLength));
+    }
     return returnInfo;
-	}
+  }
 
-	public static ArrayList<YoutubeSearchInfo> searchVideos(String query)
-			throws GeneralSecurityException, IOException, GoogleJsonResponseException {
-		YouTube youtubeService = getService();
-		YouTube.Search.List listVids = youtubeService.search().list("snippet");
-		SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).setType("video").execute();
-		ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
-		List<SearchResult> listVidResults = listVidsResp.getItems();
-		String vidIds = "";
-		for (SearchResult result : listVidResults) {
-			vidIds += result.getId().getVideoId() + ",";
-		}
-		vidIds = vidIds.substring(0, vidIds.length() - 1);
-		YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
-		VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
-		HashMap<String, String> vidAndDuration = new HashMap<>();
-		for (Video vid : listVidInfoResp.getItems()) {
-			vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
-		}
-		for (SearchResult result : listVidResults) {
-			returnInfo.add(new YoutubeSearchInfo(result.getId().getVideoId(), result.getSnippet().getTitle(), vidAndDuration.get(result.getId().getVideoId())));
-		}
-		return returnInfo;
-	}
+  public static ArrayList<YoutubeSearchInfo> searchVideos(String query)
+      throws GeneralSecurityException, IOException, GoogleJsonResponseException {
+    YouTube youtubeService = getService();
+    YouTube.Search.List listVids = youtubeService.search().list("snippet");
+    SearchListResponse listVidsResp = listVids.setKey(DEVELOPER_KEY).setMaxResults(5L).setQ(query).setType("video")
+        .execute();
+    ArrayList<YoutubeSearchInfo> returnInfo = new ArrayList<YoutubeSearchInfo>();
+    List<SearchResult> listVidResults = listVidsResp.getItems();
+    String vidIds = "";
+    for (SearchResult result : listVidResults) {
+      vidIds += result.getId().getVideoId() + ",";
+    }
+    vidIds = vidIds.substring(0, vidIds.length() - 1);
+    YouTube.Videos.List listVidInfo = youtubeService.videos().list("snippet,contentDetails");
+    VideoListResponse listVidInfoResp = listVidInfo.setKey(DEVELOPER_KEY).setId(vidIds).execute();
+    HashMap<String, String> vidAndDuration = new HashMap<>();
+    for (Video vid : listVidInfoResp.getItems()) {
+      vidAndDuration.put(vid.getId(), vid.getContentDetails().getDuration());
+    }
+    for (SearchResult result : listVidResults) {
+      returnInfo.add(new YoutubeSearchInfo(result.getId().getVideoId(), result.getSnippet().getTitle(),
+          vidAndDuration.get(result.getId().getVideoId())));
+    }
+    return returnInfo;
+  }
 }

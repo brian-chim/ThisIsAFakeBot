@@ -10,36 +10,36 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class MusicHandler {
-	private static MusicHandler instance = null;
-	private AudioPlayerManager playerManager;
-	private Map<Long, GuildMusicManager> musicManagers;
+  private static MusicHandler instance = null;
+  private AudioPlayerManager playerManager;
+  private Map<Long, GuildMusicManager> musicManagers;
 
-	private MusicHandler() {
-		playerManager = new DefaultAudioPlayerManager();
-		musicManagers = new HashMap<>();
-		AudioSourceManagers.registerRemoteSources(playerManager);
-		AudioSourceManagers.registerLocalSource(playerManager);
-	}
+  private MusicHandler() {
+    playerManager = new DefaultAudioPlayerManager();
+    musicManagers = new HashMap<>();
+    AudioSourceManagers.registerRemoteSources(playerManager);
+    AudioSourceManagers.registerLocalSource(playerManager);
+  }
 
-	public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
-		long guildId = Long.parseLong(guild.getId());
-	    GuildMusicManager musicManager = musicManagers.get(guildId);
-	    if (musicManager == null) {
-	    	musicManager = new GuildMusicManager(playerManager);
-	    	musicManagers.put(guildId, musicManager);
-		}
-	    guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
-	    return musicManager;
-	}
+  public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
+    long guildId = Long.parseLong(guild.getId());
+    GuildMusicManager musicManager = musicManagers.get(guildId);
+    if (musicManager == null) {
+      musicManager = new GuildMusicManager(playerManager);
+      musicManagers.put(guildId, musicManager);
+    }
+    guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
+    return musicManager;
+  }
 
-	public AudioPlayerManager getAudioPlayerManager() {
-		return playerManager;
-	}
+  public AudioPlayerManager getAudioPlayerManager() {
+    return playerManager;
+  }
 
-	public static MusicHandler getInstance() {
-		if (instance == null) {
-			instance = new MusicHandler();
-		}
-		return instance;
-	}
+  public static MusicHandler getInstance() {
+    if (instance == null) {
+      instance = new MusicHandler();
+    }
+    return instance;
+  }
 }

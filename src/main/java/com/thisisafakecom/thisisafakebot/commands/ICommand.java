@@ -7,7 +7,7 @@ public interface ICommand {
   public static final String description = "";
 
   public String getCommandHandled();
-  
+
   public void handle(Message input) throws IncorrectUsageException;
 
   public void correctUsage(Message input);

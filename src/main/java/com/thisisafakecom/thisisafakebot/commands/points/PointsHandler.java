@@ -13,14 +13,13 @@ public class PointsHandler {
     // rng from 0 to 100
     double random = Math.random() * 100;
     if (random <= genRate) {
-      PointsDBHandler.addPoints(message.getAuthor(), 1); 
+      PointsDBHandler.addPoints(message.getAuthor(), 1);
     }
   }
 
   /*
-  // will have the bot say a msg and user does a cmd to claim pts
-  public static void pointsMessage(Message message) {
-  }
-  */
+   * // will have the bot say a msg and user does a cmd to claim pts public static
+   * void pointsMessage(Message message) { }
+   */
 
 }

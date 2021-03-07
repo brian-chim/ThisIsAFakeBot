@@ -12,41 +12,41 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class UnendingCommand extends CommandAbstract {
 
-	public UnendingCommand() {
-		commandHandled = "unending";
-	}
+  public UnendingCommand() {
+    commandHandled = "unending";
+  }
 
-	@Override
-	public void handle(Message input) throws IncorrectUsageException {
-		String[] tokenized = input.getContentRaw().split(" ");
-		if (tokenized.length != 1) {
-			throw new IncorrectUsageException();
-		} else {
-			Guild guild = input.getGuild();
-			MusicHandler mh = MusicHandler.getInstance();
-			GuildMusicManager gm = mh.getGuildAudioPlayer(guild);
+  @Override
+  public void handle(Message input) throws IncorrectUsageException {
+    String[] tokenized = input.getContentRaw().split(" ");
+    if (tokenized.length != 1) {
+      throw new IncorrectUsageException();
+    } else {
+      Guild guild = input.getGuild();
+      MusicHandler mh = MusicHandler.getInstance();
+      GuildMusicManager gm = mh.getGuildAudioPlayer(guild);
       MessageChannel channel = input.getChannel();
-			if (gm.scheduler.getLoop()) {
-			  channel.sendMessage("You must turn off loop before turning on unending!").queue();
-			  return;
-			}
-			gm.scheduler.setUnending(!gm.scheduler.getUnending());
-			String msg = "Unending playlist has been " + (gm.scheduler.getUnending() ? "enabled" : "disabled");
-			channel.sendMessage(msg).queue();
-		}
-	}
+      if (gm.scheduler.getLoop()) {
+        channel.sendMessage("You must turn off loop before turning on unending!").queue();
+        return;
+      }
+      gm.scheduler.setUnending(!gm.scheduler.getUnending());
+      String msg = "Unending playlist has been " + (gm.scheduler.getUnending() ? "enabled" : "disabled");
+      channel.sendMessage(msg).queue();
+    }
+  }
 
-	@Override
-	public void correctUsage(Message input) {
-	    MessageChannel channel = input.getChannel();
-	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
-	    channel.sendMessage(msg).queue();
-	}
+  @Override
+  public void correctUsage(Message input) {
+    MessageChannel channel = input.getChannel();
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
+    channel.sendMessage(msg).queue();
+  }
 
-	@Override
-	public String commandDescription() {
-		String ret = "Set the bot to play / stop playing related songs to the last song in the queue.\n"
-				+ "Usage: " + App.botPrefix + commandHandled;
-		return ret;
-	}
+  @Override
+  public String commandDescription() {
+    String ret = "Set the bot to play / stop playing related songs to the last song in the queue.\n" + "Usage: "
+        + App.botPrefix + commandHandled;
+    return ret;
+  }
 }

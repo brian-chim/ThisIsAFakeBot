@@ -12,41 +12,41 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class LoopCommand extends CommandAbstract {
 
-	public LoopCommand() {
-		commandHandled = "loop";
-	}
+  public LoopCommand() {
+    commandHandled = "loop";
+  }
 
-	@Override
-	public void handle(Message input) throws IncorrectUsageException {
-		String[] tokenized = input.getContentRaw().split(" ");
-		if (tokenized.length != 1) {
-			throw new IncorrectUsageException();
-		} else {
-			Guild guild = input.getGuild();
-			MusicHandler mh = MusicHandler.getInstance();
-			GuildMusicManager gm = mh.getGuildAudioPlayer(guild);
+  @Override
+  public void handle(Message input) throws IncorrectUsageException {
+    String[] tokenized = input.getContentRaw().split(" ");
+    if (tokenized.length != 1) {
+      throw new IncorrectUsageException();
+    } else {
+      Guild guild = input.getGuild();
+      MusicHandler mh = MusicHandler.getInstance();
+      GuildMusicManager gm = mh.getGuildAudioPlayer(guild);
       MessageChannel channel = input.getChannel();
       if (gm.scheduler.getUnending()) {
-	      channel.sendMessage("You must turn off unending before turning on loop!").queue();
-	      return;
-	    }
-			gm.scheduler.setLoop(!gm.scheduler.getLoop());
-			String msg = "Playlist Loop has been " + (gm.scheduler.getLoop() ? "enabled" : "disabled");
-			channel.sendMessage(msg).queue();
-		}
-	}
+        channel.sendMessage("You must turn off unending before turning on loop!").queue();
+        return;
+      }
+      gm.scheduler.setLoop(!gm.scheduler.getLoop());
+      String msg = "Playlist Loop has been " + (gm.scheduler.getLoop() ? "enabled" : "disabled");
+      channel.sendMessage(msg).queue();
+    }
+  }
 
-	@Override
-	public void correctUsage(Message input) {
-	    MessageChannel channel = input.getChannel();
-	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
-	    channel.sendMessage(msg).queue();
-	}
+  @Override
+  public void correctUsage(Message input) {
+    MessageChannel channel = input.getChannel();
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
+    channel.sendMessage(msg).queue();
+  }
 
-	@Override
-	public String commandDescription() {
-		String ret = "Set the bot to loop / stop looping through your music.\n"
-				+ "Usage: " + App.botPrefix + commandHandled;
-		return ret;
-	}
+  @Override
+  public String commandDescription() {
+    String ret = "Set the bot to loop / stop looping through your music.\n" + "Usage: " + App.botPrefix
+        + commandHandled;
+    return ret;
+  }
 }

@@ -9,33 +9,32 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class GoodnightCommand extends CommandAbstract {
 
-	public GoodnightCommand() {
-		commandHandled = "goodnight";
-	}
+  public GoodnightCommand() {
+    commandHandled = "goodnight";
+  }
 
-	@Override
-	public void handle(Message input) throws IncorrectUsageException {
-		String[] tokenized = input.getContentRaw().split(" ");
-		if (tokenized.length != 1) {
-			throw new IncorrectUsageException();
-		} else {
-			String msg = "Goodnight " + input.getAuthor().getAsMention();
-			MessageChannel channel = input.getChannel();
-			channel.sendMessage(msg).queue();
-		}
-	}
+  @Override
+  public void handle(Message input) throws IncorrectUsageException {
+    String[] tokenized = input.getContentRaw().split(" ");
+    if (tokenized.length != 1) {
+      throw new IncorrectUsageException();
+    } else {
+      String msg = "Goodnight " + input.getAuthor().getAsMention();
+      MessageChannel channel = input.getChannel();
+      channel.sendMessage(msg).queue();
+    }
+  }
 
-	@Override
-	public void correctUsage(Message input) {
-		MessageChannel channel = input.getChannel();
-	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
-		channel.sendMessage(msg).queue();
-	}
+  @Override
+  public void correctUsage(Message input) {
+    MessageChannel channel = input.getChannel();
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
+    channel.sendMessage(msg).queue();
+  }
 
-	public String commandDescription() {
-		String ret = "Says goodnight to you :)\n"
-				+ "Usage: " + App.botPrefix + commandHandled;
-		return ret;
-	}
+  public String commandDescription() {
+    String ret = "Says goodnight to you :)\n" + "Usage: " + App.botPrefix + commandHandled;
+    return ret;
+  }
 
 }

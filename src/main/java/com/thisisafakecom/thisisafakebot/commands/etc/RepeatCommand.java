@@ -19,18 +19,18 @@ public class RepeatCommand extends CommandAbstract {
   public void handle(Message input) throws IncorrectUsageException {
     // split the msg by space
     String[] tokenized = input.getContentRaw().split(" ");
-    if(tokenized.length < 3 || !StringUtils.isNumeric(tokenized[tokenized.length - 1])) {
+    if (tokenized.length < 3 || !StringUtils.isNumeric(tokenized[tokenized.length - 1])) {
       throw new IncorrectUsageException();
     } else {
       String msg = "";
       // reconstruct the msg
-      for(int i = 1; i < tokenized.length - 1; i++) {
+      for (int i = 1; i < tokenized.length - 1; i++) {
         msg += tokenized[i] + " ";
       }
       MessageChannel channel = input.getChannel();
       // send the message the amount of times
-      for(int j = 0; j < Integer.parseInt(tokenized[tokenized.length - 1]); j++) {
-        channel.sendMessage(msg).queue();        
+      for (int j = 0; j < Integer.parseInt(tokenized[tokenized.length - 1]); j++) {
+        channel.sendMessage(msg).queue();
       }
     }
   }
@@ -38,14 +38,15 @@ public class RepeatCommand extends CommandAbstract {
   @Override
   public void correctUsage(Message input) {
     MessageChannel channel = input.getChannel();
-    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + " [your message here] " + "[number of repetitions]``";
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + " [your message here] "
+        + "[number of repetitions]``";
     channel.sendMessage(msg).queue();
   }
 
-@Override
-public String commandDescription() {
-	String ret = "Repeats your message a number of times.\n"
-			+ "Usage: " + App.botPrefix + commandHandled + " [your message here] + [number of repetitions]";
-	return ret;
-}
+  @Override
+  public String commandDescription() {
+    String ret = "Repeats your message a number of times.\n" + "Usage: " + App.botPrefix + commandHandled
+        + " [your message here] + [number of repetitions]";
+    return ret;
+  }
 }

@@ -12,34 +12,34 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ShuffleCommand extends CommandAbstract {
 
-	public ShuffleCommand() {
-		commandHandled = "shuffle";
-	}
-	@Override
-	public void handle(Message input) throws IncorrectUsageException {
-		String[] tokenized = input.getContentRaw().split(" ");
-		if (tokenized.length != 1) {
-			throw new IncorrectUsageException();
-		} else {
-			TextChannel channel = input.getTextChannel();
-			MusicHandler mh = MusicHandler.getInstance();
-			GuildMusicManager musicManager = mh.getGuildAudioPlayer(channel.getGuild());
-			musicManager.scheduler.shuffleQueue();
-			channel.sendMessage("The queue has been shuffled!").queue();
-		}
-	}
+  public ShuffleCommand() {
+    commandHandled = "shuffle";
+  }
 
-	@Override
-	public void correctUsage(Message input) {
-	    MessageChannel channel = input.getChannel();
-	    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
-	    channel.sendMessage(msg).queue();
-	}
+  @Override
+  public void handle(Message input) throws IncorrectUsageException {
+    String[] tokenized = input.getContentRaw().split(" ");
+    if (tokenized.length != 1) {
+      throw new IncorrectUsageException();
+    } else {
+      TextChannel channel = input.getTextChannel();
+      MusicHandler mh = MusicHandler.getInstance();
+      GuildMusicManager musicManager = mh.getGuildAudioPlayer(channel.getGuild());
+      musicManager.scheduler.shuffleQueue();
+      channel.sendMessage("The queue has been shuffled!").queue();
+    }
+  }
 
-	@Override
-	public String commandDescription() {
-		String ret = "Shuffles the music queue.\n"
-				+ "Usage: " + App.botPrefix + commandHandled;
-		return ret;
-	}
+  @Override
+  public void correctUsage(Message input) {
+    MessageChannel channel = input.getChannel();
+    String msg = "Correct Usage: ``" + App.botPrefix + commandHandled + "``";
+    channel.sendMessage(msg).queue();
+  }
+
+  @Override
+  public String commandDescription() {
+    String ret = "Shuffles the music queue.\n" + "Usage: " + App.botPrefix + commandHandled;
+    return ret;
+  }
 }
