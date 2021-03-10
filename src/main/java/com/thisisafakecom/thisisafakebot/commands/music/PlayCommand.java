@@ -153,6 +153,7 @@ public class PlayCommand extends CommandAbstract {
 
       @Override
       public void loadFailed(FriendlyException exception) {
+        exception.printStackTrace();
         channel.sendMessage("Could not play: " + exception.getMessage()).queue();
       }
     });

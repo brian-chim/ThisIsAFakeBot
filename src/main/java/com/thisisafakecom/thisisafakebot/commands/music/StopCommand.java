@@ -26,6 +26,8 @@ public class StopCommand extends CommandAbstract {
     GuildMusicManager gm = MusicHandler.getInstance().getGuildAudioPlayer(input.getGuild());
     // clear the queue
     int removedCount = gm.scheduler.clearQueue();
+    gm.scheduler.setLoop(false);
+    gm.scheduler.setUnending(false);
     String msg = "Removed " + removedCount + " tracks from queue!";
     MessageChannel channel = input.getChannel();
     channel.sendMessage(msg).queue();
