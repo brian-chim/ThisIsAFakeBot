@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
@@ -60,6 +61,9 @@ public class App extends ListenerAdapter {
           ch.handleCommand(msgReceived);
         } catch (CommandNotSupportedException e) {
           event.getChannel().sendMessage("Command not found!").queue();
+        } catch (InsufficientPermissionException e) {
+          System.err.println(e.getMessage());
+          event.getChannel().sendMessage(e.getMessage()).queue();
         }
       }
       PointsHandler.autoGenPoints(msgReceived);

@@ -24,6 +24,7 @@ import com.thisisafakecom.thisisafakebot.commands.music.UnendingCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.BetCoinCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GetPointsCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.GivePointsCommand;
+import com.thisisafakecom.thisisafakebot.commands.points.SlotsCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.StartRaceCommand;
 import com.thisisafakecom.thisisafakebot.commands.points.trivia.TriviaCommand;
 
@@ -36,6 +37,7 @@ public class CommandHandler extends ListenerAdapter {
   private static ArrayList<ICommand> etcCommands = new ArrayList<ICommand>();
   private static ArrayList<ICommand> musicCommands = new ArrayList<ICommand>();
   private static ArrayList<ICommand> pointsCommands = new ArrayList<ICommand>();
+  //private static ArrayList<ICommand> testCommands = new ArrayList<ICommand>();
   private static final CommandHandler handler = new CommandHandler();
 
   public CommandHandler() {
@@ -57,6 +59,7 @@ public class CommandHandler extends ListenerAdapter {
     pointsCommands.add(new GetPointsCommand());
     pointsCommands.add(new BetCoinCommand());
     pointsCommands.add(new StartRaceCommand());
+    pointsCommands.add(new SlotsCommand());
     // etc
     etcCommands.add(new JokeCommand());
     etcCommands.add(new EightBallCommand());
@@ -64,10 +67,13 @@ public class CommandHandler extends ListenerAdapter {
     etcCommands.add(new ChooseCommand());
     etcCommands.add(new GoodnightCommand());
     etcCommands.add(new HelpCommand());
+    // test commands
+
     // overall handler
     handledCommands.add(etcCommands);
     handledCommands.add(musicCommands);
     handledCommands.add(pointsCommands);
+    //handledCommands.add(testCommands);
   }
 
   public void handleCommand(Message input) throws CommandNotSupportedException {
